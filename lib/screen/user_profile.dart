@@ -1,10 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:profile_update_app/screen/user_updated_profile_screen.dart';
 import 'package:profile_update_app/service/database/database.dart';
 import 'package:profile_update_app/service/model/user_details.dart';
@@ -47,7 +43,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   Future<void> getData() async {
     isLoading = true;
-    filterList = await DataBase.instance.getRepositoryList();
+    filterList = await DataBase.instance.getUserDetailsList();
     _userIdController.text = filterList.first.userId;
     _addressController.text = filterList.first.address;
     _emailController.text = filterList.first.email;
@@ -88,12 +84,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         padding: const EdgeInsets.all(15),
         child: Column(
           children: [
-            // SizedBox(
-            //     width: 150,
-            //     height: 150,
-            //     child: user.imagePath.isEmpty
-            //         ? const Text('IM')
-            //         : Image.memory(base64Decode(user.imagePath))),
             const SizedBox(height: 5),
             profilePictureWidget(user),
             const SizedBox(height: 15),
@@ -178,35 +168,12 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     );
   }
 
-  // Future<String> storeImage() async {
-  //   if (pickedFile == null) {
-  //     return widget.movieData.posterUrl ?? StringConstants.defaultPostarUrl;
-  //   }
-
-  //   File imageFile = File(pickedFile!.path);
-  //   Reference ref = FirebaseStorage.instance
-  //       .ref()
-  //       .child("/MoviePoster/image_" + DateTime.now().toString() + ".jpg");
-  //   UploadTask uploadTask = ref.putFile(imageFile);
-
-  //   String imageURL = StringConstants.defaultPostarUrl;
-  //   await uploadTask.then((res) async {
-  //     imageURL = await res.ref.getDownloadURL();
-
-  //     setLoadingState(false);
-  //   });
-
-  //   return imageURL;
-  // }
-
   Widget profilePictureWidget(UserDetails user) {
     return GestureDetector(
       onTap: () async {
         pickedFile = (await _picker.pickImage(source: ImageSource.gallery));
         if (pickedFile == null) return;
         setState(() {});
-        //  setLoadingState(true);
-        //   storeImage();
       },
       child: Card(
         shape: RoundedRectangleBorder(
@@ -229,7 +196,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 )),
             Container(
                 alignment: Alignment.center,
-                padding: EdgeInsets.all(7),
+                padding: const EdgeInsets.all(7),
                 width: MediaQuery.of(context).size.width,
                 color: Colors.black45,
                 child: Text("Update Profile Picture",

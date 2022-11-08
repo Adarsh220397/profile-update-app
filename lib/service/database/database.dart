@@ -6,7 +6,7 @@ class DataBase {
   DataBase._internal();
   static DataBase instance = DataBase._internal();
 
-  Future<List<UserDetails>> getRepositoryList() async {
+  Future<List<UserDetails>> getUserDetailsList() async {
     //
     List<UserDetails> repoList = [];
 

@@ -1,18 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:profile_update_app/screen/user_profile.dart';
-import 'package:profile_update_app/service/database/database.dart';
-import 'package:profile_update_app/service/model/user_details.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:profile_update_app/utils/widgets/button_widget.dart';
-import 'package:profile_update_app/utils/widgets/common_utils_widget.dart';
-import '../preferences/preference_constants.dart';
 import '../preferences/preference_manager.dart';
 import '../utils/widgets/circular_indicator_widget.dart';
 
@@ -95,12 +85,6 @@ class _UserUpdatedProfileScreenState extends State<UserUpdatedProfileScreen> {
       padding: const EdgeInsets.all(15),
       child: Column(
         children: [
-          // SizedBox(
-          //     width: 150,
-          //     height: 150,
-          //     child: user.imagePath.isEmpty
-          //         ? const Text('IM')
-          //         : Image.memory(base64Decode(user.imagePath))),
           const SizedBox(height: 5),
           imagePath.isEmpty ? const Text('No image') : profilePictureWidget(),
           Column(
@@ -157,27 +141,6 @@ class _UserUpdatedProfileScreenState extends State<UserUpdatedProfileScreen> {
       ),
     );
   }
-
-  // Future<String> storeImage() async {
-  //   if (pickedFile == null) {
-  //     return widget.movieData.posterUrl ?? StringConstants.defaultPostarUrl;
-  //   }
-
-  //   File imageFile = File(pickedFile!.path);
-  //   Reference ref = FirebaseStorage.instance
-  //       .ref()
-  //       .child("/MoviePoster/image_" + DateTime.now().toString() + ".jpg");
-  //   UploadTask uploadTask = ref.putFile(imageFile);
-
-  //   String imageURL = StringConstants.defaultPostarUrl;
-  //   await uploadTask.then((res) async {
-  //     imageURL = await res.ref.getDownloadURL();
-
-  //     setLoadingState(false);
-  //   });
-
-  //   return imageURL;
-  // }
 
   Widget profilePictureWidget() {
     return Card(
