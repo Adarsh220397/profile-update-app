@@ -16,6 +16,18 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        backgroundColor: Colors.black,
+        scaffoldBackgroundColor: const Color.fromARGB(255, 1, 16, 39),
+        inputDecorationTheme: InputDecorationTheme(
+          labelStyle: const TextStyle(color: Colors.white),
+          hintStyle: const TextStyle(color: Colors.grey),
+          focusColor: Colors.white,
+          fillColor: Colors.black,
+          filled: true,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
       ),
       home: const UserProfileScreen(),
     );
