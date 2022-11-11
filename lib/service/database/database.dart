@@ -30,13 +30,16 @@ class DataBase {
     return repoList;
   }
 
-  Future<String> postProfileUpdate() async {
+  Future<String> postProfileUpdate(UserDetails user) async {
     //
     String status = '';
 
-    var response = await http.post(Uri.parse(
-      'http://maccode.in/adhoccars/mypanel/api_adhocCars/user_profile_update.php',
-    ));
+    var response = await http.post(
+        Uri.parse(
+          'http://maccode.in/adhoccars/mypanel/api_adhocCars/user_profile_update.php',
+        ),
+        body: user.toJson());
+    print(response.body.length);
     if (response.statusCode == 200) {
       var jsonResponse = json.decode(response.body);
 
