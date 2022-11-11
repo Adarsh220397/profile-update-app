@@ -38,6 +38,8 @@ class _UserUpdatedProfileScreenState extends State<UserUpdatedProfileScreen> {
     isLoading = true;
 
     userId = await PreferenceManager.instance.getUserId();
+
+    print('---$userId------');
     address = await PreferenceManager.instance.getAddress();
     email = await PreferenceManager.instance.getEmail();
     mobileNumber = await PreferenceManager.instance.getMobileNumber();
@@ -161,9 +163,7 @@ class _UserUpdatedProfileScreenState extends State<UserUpdatedProfileScreen> {
                     )
                   : AspectRatio(
                       aspectRatio: 16.0 / 9.0,
-                      child: Image.memory(
-                        base64Decode(imagePath),
-                      ),
+                      child: Image.file(File(imagePath), fit: BoxFit.fill),
                     )),
         ],
       ),
