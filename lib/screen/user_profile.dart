@@ -26,6 +26,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   XFile? pickedFile;
   List<UserDetails> filterList = [];
   bool isLoading = false;
+  String uid = '';
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   // Controllers
   final TextEditingController _userIdController = TextEditingController();
@@ -43,12 +44,36 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   Future<void> getData() async {
     isLoading = true;
-    filterList = await DataBase.instance.getUserDetailsList();
-    _userIdController.text = filterList.first.userId;
-    _addressController.text = filterList.first.address;
-    _emailController.text = filterList.first.email;
-    _mobileNumberController.text = filterList.first.mobile;
-    _userNameController.text = filterList.first.userName;
+    uid = await PreferenceManager.instance.getUserId();
+
+    if (uid == '') {
+      filterList = await DataBase.instance.getUserDetailsList();
+      print(filterList.length);
+
+      _userIdController.text = filterList.first.userId;
+      _addressController.text = filterList.first.address;
+      _emailController.text = filterList.first.email;
+      _mobileNumberController.text = filterList.first.mobile;
+      _userNameController.text = filterList.first.userName;
+    } else {
+      _mobileNumberController.text =
+          await PreferenceManager.instance.getMobileNumber();
+      _userNameController.text = await PreferenceManager.instance.getName();
+      _userIdController.text = await PreferenceManager.instance.getUserId();
+      _addressController.text = await PreferenceManager.instance.getAddress();
+
+      _emailController.text = await PreferenceManager.instance.getEmail();
+
+      UserDetails userDetails = UserDetails(
+          address: _addressController.text,
+          email: _emailController.text,
+          imagePath: await PreferenceManager.instance.getImageUrl(),
+          mobile: _mobileNumberController.text,
+          userId: _userIdController.text,
+          userName: _userNameController.text);
+      filterList.add(userDetails);
+    }
+
     isLoading = false;
     setState(() {});
   }
@@ -126,12 +151,21 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       await PreferenceManager.instance.setEmail(_emailController.text);
 
       //  isLoading = false;
-      String status = await DataBase.instance.postProfileUpdate();
+
+      UserDetails userDetails = UserDetails(
+          address: _addressController.text,
+          email: _emailController.text,
+          imagePath: pickedFile == null ? user.imagePath : pickedFile!.path,
+          mobile: _mobileNumberController.text,
+          userId: _userIdController.text,
+          userName: _userNameController.text);
+      String status = await DataBase.instance.postProfileUpdate(userDetails);
       if (status == 'Profile Updated Successfully!.') {
         CommonUtils.instance.showSnackBar(context, status, "P");
       } else {
         CommonUtils.instance.showSnackBar(context, " Please try again.", "N");
       }
+
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
@@ -183,17 +217,28 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         child: Stack(
           alignment: Alignment.bottomCenter,
           children: [
-            SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: 150,
-                child: AspectRatio(
-                  aspectRatio: 16.0 / 9.0,
-                  child: pickedFile != null
-                      ? Image.file(File(pickedFile!.path), fit: BoxFit.fill)
-                      : Image.memory(
-                          base64Decode(user.imagePath),
-                        ),
-                )),
+            uid.isNotEmpty
+                ? SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    height: 150,
+                    child: AspectRatio(
+                        aspectRatio: 16.0 / 9.0,
+                        child: pickedFile != null
+                            ? Image.file(File(pickedFile!.path),
+                                fit: BoxFit.fill)
+                            : Image.file(File(user.imagePath),
+                                fit: BoxFit.fill)))
+                : SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    height: 150,
+                    child: AspectRatio(
+                      aspectRatio: 16.0 / 9.0,
+                      child: pickedFile != null
+                          ? Image.file(File(pickedFile!.path), fit: BoxFit.fill)
+                          : Image.memory(
+                              base64Decode(user.imagePath),
+                            ),
+                    )),
             Container(
                 alignment: Alignment.center,
                 padding: const EdgeInsets.all(7),
