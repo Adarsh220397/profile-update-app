@@ -25,6 +25,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   final ImagePicker _picker = ImagePicker();
   XFile? pickedFile;
   List<UserDetails> filterList = [];
+  List<UserDetails> list = [];
   bool isLoading = false;
   String uid = '';
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -44,6 +45,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   Future<void> getData() async {
     isLoading = true;
+    // PreferenceManager.instance.clearAll();
     uid = await PreferenceManager.instance.getUserId();
 
     if (uid == '') {
@@ -56,6 +58,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       _mobileNumberController.text = filterList.first.mobile;
       _userNameController.text = filterList.first.userName;
     } else {
+      list = await DataBase.instance.getUserDetailsList();
+
       _mobileNumberController.text =
           await PreferenceManager.instance.getMobileNumber();
       _userNameController.text = await PreferenceManager.instance.getName();
@@ -218,16 +222,28 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           alignment: Alignment.bottomCenter,
           children: [
             uid.isNotEmpty
-                ? SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    height: 150,
-                    child: AspectRatio(
-                        aspectRatio: 16.0 / 9.0,
-                        child: pickedFile != null
-                            ? Image.file(File(pickedFile!.path),
-                                fit: BoxFit.fill)
-                            : Image.file(File(user.imagePath),
-                                fit: BoxFit.fill)))
+                ? list.first.imagePath == user.imagePath
+                    ? SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: 150,
+                        child: AspectRatio(
+                            aspectRatio: 16.0 / 9.0,
+                            child: pickedFile != null
+                                ? Image.file(File(pickedFile!.path),
+                                    fit: BoxFit.fill)
+                                : Image.memory(
+                                    base64Decode(user.imagePath),
+                                  )))
+                    : SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: 150,
+                        child: AspectRatio(
+                            aspectRatio: 16.0 / 9.0,
+                            child: pickedFile != null
+                                ? Image.file(File(pickedFile!.path),
+                                    fit: BoxFit.fill)
+                                : Image.file(File(user.imagePath),
+                                    fit: BoxFit.fill)))
                 : SizedBox(
                     width: MediaQuery.of(context).size.width,
                     height: 150,

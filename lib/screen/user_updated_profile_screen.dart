@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:profile_update_app/screen/user_profile.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:profile_update_app/service/database/database.dart';
+import 'package:profile_update_app/service/model/user_details.dart';
 import '../preferences/preference_manager.dart';
 import '../utils/widgets/circular_indicator_widget.dart';
 
@@ -26,7 +28,7 @@ class _UserUpdatedProfileScreenState extends State<UserUpdatedProfileScreen> {
   String email = '';
   String mobileNumber = '';
   String imagePath = '';
-
+  List<UserDetails> filterList = [];
   @override
   void initState() {
     super.initState();
@@ -36,6 +38,7 @@ class _UserUpdatedProfileScreenState extends State<UserUpdatedProfileScreen> {
 
   Future<void> getData() async {
     isLoading = true;
+    filterList = await DataBase.instance.getUserDetailsList();
 
     userId = await PreferenceManager.instance.getUserId();
 
@@ -153,18 +156,25 @@ class _UserUpdatedProfileScreenState extends State<UserUpdatedProfileScreen> {
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: [
-          SizedBox(
-              width: MediaQuery.of(context).size.width,
-              height: 150,
-              child: widget.bFilePicked
-                  ? AspectRatio(
-                      aspectRatio: 16.0 / 9.0,
-                      child: Image.file(File(imagePath), fit: BoxFit.fill),
-                    )
-                  : AspectRatio(
-                      aspectRatio: 16.0 / 9.0,
-                      child: Image.file(File(imagePath), fit: BoxFit.fill),
-                    )),
+          filterList.first.imagePath == imagePath
+              ? AspectRatio(
+                  aspectRatio: 16.0 / 9.0,
+                  child: Image.memory(
+                    base64Decode(imagePath),
+                  ),
+                )
+              : SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: 150,
+                  child: widget.bFilePicked
+                      ? AspectRatio(
+                          aspectRatio: 16.0 / 9.0,
+                          child: Image.file(File(imagePath), fit: BoxFit.fill),
+                        )
+                      : AspectRatio(
+                          aspectRatio: 16.0 / 9.0,
+                          child: Image.file(File(imagePath), fit: BoxFit.fill),
+                        )),
         ],
       ),
     );
